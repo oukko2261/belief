@@ -18,6 +18,11 @@
     <main>
       <section id="adminPanel" hidden>
         <h2>상품 관리</h2>
+        <details id="storeEditor">
+          <summary>쇼핑몰 문구·계좌·색상 수정</summary>
+          <p>상단 제목부터 주문 안내까지 수정하세요. 저장한 설정은 이 브라우저의 모든 판매 날짜에 적용됩니다.</p>
+          <form id="storeForm"><div id="storeFields"></div><button type="submit" class="submit">쇼핑몰 설정 저장</button><p id="storeStatus" role="status"></p></form>
+        </details>
         <section id="dateManager">
           <h3>날짜별 주문서</h3>
           <label>판매 날짜<input id="saleDate" type="date" /></label>
@@ -101,5 +106,6 @@
     <dialog id="success"><div class="success-icon">✓</div><h2>주문이 접수되었습니다</h2><p id="successText"></p><button class="submit close-success">확인</button></dialog>
     <script src="app.js"></script>
     <script src="google-connect.js"></script>
+    <script src="store-settings.js"></script>
   </body>
 </html>
