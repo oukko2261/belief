@@ -15,21 +15,25 @@ function refreshSavedSalePages(){
 document.querySelector('#loadSalePage').onclick=()=>{
   const date=savedSaleSelect.value;
   if(!date){document.querySelector('#saleDateStatus').textContent='불러올 주문서를 목록에서 선택해 주세요.';return;}
-  const draftIds=[...document.querySelectorAll('#dateProducts input:checked')].map(x=>Number(x.value));
-  const storedIds=salePages[activeSaleDate]||products.filter(isOnSaleDate).map(p=>p.id);
-  const unsaved=JSON.stringify(draftIds.slice().sort())!==JSON.stringify(storedIds.slice().sort())||saleName.value.trim()!==(salePageNames[activeSaleDate]||'');
-  if((cart.length||unsaved)&&!confirm('저장하지 않은 날짜별 상품 선택과 이름, 장바구니를 비우고 주문서를 불러올까요?'))return;
+  const unsaved=saleName.value.trim()!==(salePageNames[activeSaleDate]||'');
+  if((cart.length||unsaved)&&!confirm('저장하지 않은 주문서 이름과 장바구니를 비우고 주문서를 불러올까요?'))return;
   activeSaleDate=date;cart=[];drawProducts();drawCart();renderSaleEditor();refreshSavedSalePages();
   try{history.replaceState(null,'',document.querySelector('#saleLink').value);}catch{}
   const missing=(salePages[date]||[]).filter(id=>!products.some(p=>p.id===id)).length;
   document.querySelector('#saleDateStatus').textContent=`${date} 주문서를 불러왔습니다.${missing?' 현재 상품 목록에 없는 상품 '+missing+'개는 표시되지 않습니다.':''}`;
 };
-const originalOpenDate=document.querySelector('#openSaleDate').onclick;
-document.querySelector('#openSaleDate').onclick=()=>{originalOpenDate();refreshSavedSalePages();};
+document.querySelector('#saleDate').onchange=()=>{
+  const input=document.querySelector('#saleDate'),date=input.value;
+  if(!validSaleDate(date)){input.value=activeSaleDate;return;}
+  if(date===activeSaleDate)return;
+  if((cart.length||saleName.value.trim()!==(salePageNames[activeSaleDate]||''))&&!confirm('날짜를 변경하면 저장하지 않은 주문서 이름과 장바구니가 비워집니다. 변경할까요?')){input.value=activeSaleDate;return;}
+  activeSaleDate=date;cart=[];drawProducts();drawCart();renderSaleEditor();refreshSavedSalePages();
+  try{history.replaceState(null,'',document.querySelector('#saleLink').value);}catch{}
+  document.querySelector('#saleDateStatus').textContent=`${date} 주문서입니다. 상품을 저장하면 이 날짜에 추가됩니다.`;
+};
 document.querySelector('#saveSaleDate').onclick=()=>{
   const status=document.querySelector('#saleDateStatus');
-  if(document.querySelector('#saleDate').value!==activeSaleDate){status.textContent='먼저 이 날짜 주문서 열기를 눌러 주세요.';return;}
-  const ids=[...document.querySelectorAll('#dateProducts input:checked')].map(x=>Number(x.value));
+  const ids=salePages[activeSaleDate]||products.filter(isOnSaleDate).map(p=>p.id);
   const next={...salePages,[activeSaleDate]:ids},names={...salePageNames,[activeSaleDate]:saleName.value.trim()};
   const oldPages=localStorage.getItem('live-shop-sale-pages-v1');
   try{
