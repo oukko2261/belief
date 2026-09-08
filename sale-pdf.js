@@ -27,7 +27,7 @@ document.querySelector('#exportSalePdf').onclick=()=>{
     if(!p){el('p',`${index+1}. 삭제되어 확인할 수 없는 상품`,row);return;}
     if(p.photos?.length){const image=el('img',undefined,row);image.src=p.photos[0];image.alt=p.name;}
     el('h2',`${index+1}. ${p.name}`,row);
-    el('p',`${won(p.price)} · 재고 ${p.stock}개${p.visible?'':' · 현재 숨김'}`,row);
+    el('p',`${won(p.price)}${p.stock===0?' · 품절':p.hideStock?'':` · 재고 ${p.stock}개`}${p.visible?'':' · 현재 숨김'}`,row);
     el('p',p.detail||'',row).className='description';
   });
   const bank=el('section');el('h2',storeSettings.bankTitle,bank);el('p',`${storeSettings.bank} ${storeSettings.account}`,bank);el('p',`예금주: ${storeSettings.holder}`,bank);el('p',storeSettings.bankNote,bank);

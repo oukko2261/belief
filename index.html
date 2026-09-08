@@ -77,6 +77,7 @@
             <label>재고 수량<input id="productStock" type="number" min="0" max="1000000" step="1" required /></label>
           </div>
           <label>상품 설명<textarea id="productDescription" maxlength="5000"></textarea></label>
+          <label class="radio"><input id="hideProductStock" type="checkbox" /> 재고 수량 표시 안 함 (품절·주문 수량 제한은 유지)</label>
           <label class="radio"><input id="productVisible" type="checkbox" checked /> 주문서에 표시</label>
           <button id="saveProduct" class="submit" type="submit">상품 저장</button>
           <p id="adminMessage" role="status" aria-live="polite"></p>
