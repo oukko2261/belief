@@ -86,6 +86,7 @@
       </section>
       <section class="notice"><span>●</span> 라이브 특가 상품은 재고 소진 시 조기 마감됩니다.</section>
       <section id="products" class="product-grid" aria-label="상품 목록"></section>
+      <p id="cartFeedback" role="status" aria-live="polite"></p>
 
       <section class="order" id="order">
         <div class="section-heading"><div><p class="eyebrow">ORDER</p><h2>주문 정보</h2></div><span id="cartCount" class="count">0개</span></div>
@@ -101,6 +102,8 @@
             <label class="radio"><input type="radio" name="payment" value="transfer" checked /> 무통장 입금</label>
             <label class="radio"><input type="radio" name="payment" value="card" /> 카드 결제 <em>테스트</em></label>
           </fieldset>
+          <label id="depositorField">입금자명 (주문자와 다를 때)<input name="depositor" maxlength="50" placeholder="비워두면 주문자 이름으로 확인합니다" /></label>
+          <p id="orderError" role="alert"></p>
           <section id="transferBox" class="transfer">
             <p>무통장 입금 계좌</p>
             <strong>국민은행 123456-78-901234</strong>
@@ -112,6 +115,7 @@
         </form>
       </section>
     </main>
+    <aside id="mobileCartBar" hidden><span id="mobileCartSummary"></span><button id="goToOrder" type="button">주문 내용 확인</button></aside>
 
     <dialog id="detailDialog"><button class="close" aria-label="닫기">×</button><div id="detail"></div></dialog>
     <dialog id="success"><div class="success-icon">✓</div><h2>주문이 접수되었습니다</h2><p id="successText"></p><button class="submit close-success">확인</button></dialog>
@@ -121,5 +125,6 @@
     <script src="sale-pages.js"></script>
     <script src="sale-pdf.js"></script>
     <script src="inline-copy.js"></script>
+    <script src="live-order.js"></script>
   </body>
 </html>
