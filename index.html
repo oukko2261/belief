@@ -25,11 +25,14 @@
         </details>
         <section id="dateManager">
           <h3>날짜별 주문서</h3>
+          <label>저장된 주문서<select id="savedSalePages"><option value="">저장된 주문서 선택</option></select></label>
+          <button id="loadSalePage" type="button" class="copy">선택한 주문서 불러오기</button>
+          <label>주문서 이름<input id="salePageName" maxlength="100" placeholder="예: 봄 신상품 라이브" /></label>
           <label>판매 날짜<input id="saleDate" type="date" /></label>
           <button id="openSaleDate" type="button" class="copy">이 날짜 주문서 열기</button>
           <p>아래에서 이 날짜에 판매할 상품을 선택한 후 저장하세요. 상품 가격과 재고는 날짜 간에 공유됩니다.</p>
           <div id="dateProducts"></div>
-          <button id="saveSaleDate" type="button" class="copy">날짜별 상품 저장</button>
+          <button id="saveSaleDate" type="button" class="copy">날짜별 주문서 저장</button>
           <label>날짜별 주문서 주소<input id="saleLink" readonly /></label>
           <small>휴대폰 테스트 주소입니다. 상품·사진은 현재 브라우저에만 저장되며 다른 기기와 공유되지 않습니다.</small>
           <p id="saleDateStatus" role="status"></p>
@@ -107,5 +110,6 @@
     <script src="app.js"></script>
     <script src="google-connect.js"></script>
     <script src="store-settings.js"></script>
+    <script src="sale-pages.js"></script>
   </body>
 </html>
