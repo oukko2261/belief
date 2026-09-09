@@ -11,7 +11,6 @@ function refreshSavedSalePages(){
   }
   savedSaleSelect.value=Object.hasOwn(salePages,activeSaleDate)?activeSaleDate:previous;
   saleName.value=salePageNames[activeSaleDate]||'';
-  document.dispatchEvent(new Event('seller-catalog-changed'));
 }
 document.querySelector('#loadSalePage').onclick=()=>{
   const date=savedSaleSelect.value;
@@ -44,4 +43,3 @@ function persistCurrentSale(){
   }catch{status.textContent='저장하지 못했습니다. 브라우저 저장 공간과 설정을 확인해 주세요.';return false;}
 };
 refreshSavedSalePages();
-window.getSellerCatalogState=()=>({products,date:activeSaleDate,name:salePageNames[activeSaleDate]||'',ids:salePages[activeSaleDate]||[]});
