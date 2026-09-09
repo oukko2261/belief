@@ -8,12 +8,12 @@ export function organizeAdmin(){
  const dates=area('주문서',[q('#dateManager')]);
  const productList=document.createElement('section');
  const product=area('상품',[productList,q('#productSelect').closest('label'),q('#productForm')]);
- mountSellerProducts(productList,window.getSellerCatalogState);
- q('#productSelect').closest('label').hidden=true;
  const orders=area('주문',[q('#customerOrdersPanel')]);
  const settings=area('설정',[q('#storeEditor'),q('#sheetConnect'),q('#sheetSettings')]);
  const approval=q('#sellerApprovalPanel');if(approval)area('판매자 승인',[approval]);
  panel.replaceChildren(nav,...areas);nav.firstChild.click();
+ mountSellerProducts(productList,window.getSellerCatalogState);
+ q('#productSelect').closest('label').hidden=true;
  window.refreshSheetSaleList?.();
  q('#customerOrdersPanel').open=true;q('#storeEditor').open=true;
  q('#syncOrdersToSheet').textContent='시트 기록 재시도';q('#orderSheetStatus').textContent='주문은 자동 기록됩니다. 시트에 누락된 경우에만 재시도하세요.';
