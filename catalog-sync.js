@@ -26,7 +26,7 @@ async function runCatalog(action,{fromProduct=false}={}){
     }
     if(result.publishError||!result.published){catalogStatus.textContent='시트에는 저장됐지만 고객 화면 반영을 완료하지 못했습니다. '+(result.publishError||'공개 반영 결과를 확인할 수 없습니다.');return false;}
     catalogStatus.textContent='저장 및 고객 화면 반영 완료 · '+new Date(result.savedAt).toLocaleString('ko-KR');
-    if(result.published){const link=document.querySelector('#customerViewLink');const target=new URL(result.published.url);target.searchParams.set('date',activeSaleDate);if(activeSaleKey!==activeSaleDate)target.searchParams.set('page',activeSaleKey);link.href=target.href;link.hidden=false;}
+    if(result.published){const link=document.querySelector('#customerQuickView');if(link){const target=new URL(result.published.url);target.searchParams.set('date',activeSaleDate);if(activeSaleKey!==activeSaleDate)target.searchParams.set('page',activeSaleKey);link.href=target.href;link.hidden=false;}}
     return true;
   }catch(error){catalogStatus.textContent=error.message;return false;}finally{catalogBusy=false;controls.forEach((control,index)=>control.disabled=states[index]);saveCatalogButton.disabled=loadCatalogButton.disabled=false;}
 }
