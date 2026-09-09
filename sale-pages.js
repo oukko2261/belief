@@ -1,18 +1,22 @@
 // Each live order sheet has its own key. Older date-only records stay supported.
 let salePageNames={};
 try{const saved=JSON.parse(sellerStorage.getItem('live-shop-sale-names-v1'));if(saved&&typeof saved==='object'&&!Array.isArray(saved))salePageNames=saved;}catch{}
+let salePageStatus={};
+try{const saved=JSON.parse(sellerStorage.getItem('live-shop-sale-status-v1'));if(saved&&typeof saved==='object'&&!Array.isArray(saved))salePageStatus=saved;}catch{}
 const savedSaleSelect=document.querySelector('#savedSalePages');
 const saleName=document.querySelector('#salePageName');
+const saleActive=document.querySelector('#salePageActive');
 const pageDate=key=>/^\d{4}-\d{2}-\d{2}/.test(key||'')?key.slice(0,10):activeSaleDate;
 const newPageKey=date=>date+'__'+Date.now().toString(36);
 function refreshSavedSalePages(){
   const previous=savedSaleSelect.value;savedSaleSelect.replaceChildren(new Option('저장된 주문서 선택',''));
   for(const key of Object.keys(salePages).filter(key=>validSaleDate(pageDate(key))).sort().reverse()){
     const ids=Array.isArray(salePages[key])?salePages[key]:[];
-    savedSaleSelect.add(new Option(`${pageDate(key)} · ${salePageNames[key]||'라이브 주문서'} · ${ids.length}개 상품`,key));
+    savedSaleSelect.add(new Option(`${pageDate(key)} · ${salePageNames[key]||'라이브 주문서'} · ${salePageStatus[key]===false?'비공개 · ':'공개 · '}${ids.length}개 상품`,key));
   }
   savedSaleSelect.value=Object.hasOwn(salePages,activeSaleKey)?activeSaleKey:previous;
   saleName.value=salePageNames[activeSaleKey]||'';
+  saleActive.checked=salePageStatus[activeSaleKey]!==false;
 }
 function activatePage(key){activeSaleKey=key;activeSaleDate=pageDate(key);cart=[];drawProducts();drawCart();renderSaleEditor();refreshSavedSalePages();try{history.replaceState(null,'',document.querySelector('#saleLink').value);}catch{}}
 document.querySelector('#loadSalePage').onclick=()=>{
@@ -33,8 +37,8 @@ saleName.addEventListener('change',()=>{
 function persistCurrentSale(){
   const status=document.querySelector('#saleDateStatus');const name=saleName.value.trim();
   if(!name){status.textContent='주문서 이름을 입력해 주세요.';return false;}
-  const ids=salePages[activeSaleKey]||[];const next={...salePages,[activeSaleKey]:ids},names={...salePageNames,[activeSaleKey]:name};
+  const ids=salePages[activeSaleKey]||[];const next={...salePages,[activeSaleKey]:ids},names={...salePageNames,[activeSaleKey]:name},statuses={...salePageStatus,[activeSaleKey]:saleActive.checked};
   const oldPages=sellerStorage.getItem('live-shop-sale-pages-v1');
-  try{sellerStorage.setItem('live-shop-sale-pages-v1',JSON.stringify(next));try{sellerStorage.setItem('live-shop-sale-names-v1',JSON.stringify(names));}catch(error){if(oldPages===null)sellerStorage.removeItem('live-shop-sale-pages-v1');else sellerStorage.setItem('live-shop-sale-pages-v1',oldPages);throw error;}salePages=next;salePageNames=names;cart=cart.filter(isOnSaleDate);drawCart();drawProducts();refreshSavedSalePages();status.textContent='';return true;}catch{status.textContent='저장하지 못했습니다. 브라우저 저장 공간과 설정을 확인해 주세요.';return false;}
+  try{sellerStorage.setItem('live-shop-sale-pages-v1',JSON.stringify(next));try{sellerStorage.setItem('live-shop-sale-names-v1',JSON.stringify(names));sellerStorage.setItem('live-shop-sale-status-v1',JSON.stringify(statuses));}catch(error){if(oldPages===null)sellerStorage.removeItem('live-shop-sale-pages-v1');else sellerStorage.setItem('live-shop-sale-pages-v1',oldPages);throw error;}salePages=next;salePageNames=names;salePageStatus=statuses;cart=cart.filter(isOnSaleDate);drawCart();drawProducts();refreshSavedSalePages();status.textContent='';return true;}catch{status.textContent='저장하지 못했습니다. 브라우저 저장 공간과 설정을 확인해 주세요.';return false;}
 };
 refreshSavedSalePages();

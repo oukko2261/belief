@@ -1,6 +1,6 @@
 const catalogStatus=document.querySelector('#catalogSyncStatus');
 const saveCatalogButton=document.querySelector('#saveCatalog'),loadCatalogButton=document.querySelector('#loadCatalog');
-const catalogKeys={products:'live-shop-products-v1',salePages:'live-shop-sale-pages-v1',salePageNames:'live-shop-sale-names-v1',storeSettings:'live-shop-store-settings-v1'};
+const catalogKeys={products:'live-shop-products-v1',salePages:'live-shop-sale-pages-v1',salePageNames:'live-shop-sale-names-v1',salePageStatus:'live-shop-sale-status-v1',storeSettings:'live-shop-store-settings-v1'};
 let catalogBusy=false;
 async function runCatalog(action,{fromProduct=false}={}){
   if(catalogBusy)return false;
@@ -15,7 +15,7 @@ async function runCatalog(action,{fromProduct=false}={}){
     if(!fromProduct&&!confirm(action==='save'?`${login.email} 계정의 ${login.shopName} 시트 백업을 갱신하고, 판매 상품·사진·가격을 공개 고객 화면에도 반영할까요?`:`${login.email} 계정의 ${login.shopName} 백업으로 현재 브라우저의 상품·사진·설정을 교체할까요? 저장하지 않은 편집과 장바구니는 초기화됩니다.`))return false;
     if(action==='save'&&!persistCurrentSale())throw Error('날짜별 주문서를 저장하지 못했습니다. 기존 데이터는 유지됩니다.');
     catalogStatus.textContent=action==='save'?'Google 시트에 저장 중…':'Google 시트에서 불러오는 중…';
-    const response=await fetch('/api/catalog/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':login.csrf},body:JSON.stringify(action==='save'?{products,salePages,salePageNames,storeSettings}:{})});
+    const response=await fetch('/api/catalog/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':login.csrf},body:JSON.stringify(action==='save'?{products,salePages,salePageNames,salePageStatus,storeSettings}:{})});
     const result=await response.json();if(!response.ok)throw Error(result.error||'시트 연결에 실패했습니다.');
     if(result.empty){catalogStatus.textContent='시트에 저장된 상품 백업이 없습니다. 먼저 시트에 저장해 주세요.';return;}
     if(action==='load'){
