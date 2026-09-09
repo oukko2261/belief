@@ -2,7 +2,7 @@ const catalogStatus=document.querySelector('#catalogSyncStatus');
 const saveCatalogButton=document.querySelector('#saveCatalog'),loadCatalogButton=document.querySelector('#loadCatalog');
 const catalogKeys={products:'live-shop-products-v1',salePages:'live-shop-sale-pages-v1',salePageNames:'live-shop-sale-names-v1',storeSettings:'live-shop-store-settings-v1'};
 let catalogBusy=false;
-async function runCatalog(action,{fromProduct=false}={}){
+async function runCatalog(action,{fromProduct=false,selectedDate=''}={}){
   if(catalogBusy)return false;
   if(location.protocol==='file:'){catalogStatus.textContent='이 브라우저에만 저장되었습니다. 고객 화면 반영은 판매자 웹사이트에서 로그인 후 이용해 주세요.';return false;}
   catalogBusy=true;
@@ -22,7 +22,10 @@ async function runCatalog(action,{fromProduct=false}={}){
       const before=Object.fromEntries(Object.values(catalogKeys).map(key=>[key,sellerStorage.getItem(key)]));
       try{for(const [field,key]of Object.entries(catalogKeys))sellerStorage.setItem(key,JSON.stringify(result.data[field]));}
       catch(error){for(const [key,value]of Object.entries(before)){if(value===null)sellerStorage.removeItem(key);else sellerStorage.setItem(key,value);}throw Error('브라우저 저장 공간이 부족해 불러오지 못했습니다. 기존 데이터를 유지했습니다.');}
-      location.reload();return;
+      products=result.data.products;salePages=result.data.salePages;salePageNames=result.data.salePageNames;storeSettings=result.data.storeSettings;
+      activeSaleDate=Object.hasOwn(salePages,selectedDate)?selectedDate:Object.hasOwn(salePages,activeSaleDate)?activeSaleDate:Object.keys(salePages).sort().reverse()[0]||activeSaleDate;
+      cart=[];applyStoreSettings();for(const [key,value]of Object.entries(storeSettings)){const field=document.querySelector('#storeForm').elements.namedItem(key);if(field)field.value=value;}
+      refreshSelect();loadEditor();drawProducts();drawCart();renderSaleEditor();refreshSavedSalePages();catalogStatus.textContent='구글 시트에서 주문서를 불러왔습니다. · '+activeSaleDate;return true;
     }
     if(result.publishError||!result.published){catalogStatus.textContent='시트에는 저장됐지만 고객 화면 반영을 완료하지 못했습니다. '+(result.publishError||'공개 반영 결과를 확인할 수 없습니다.');return false;}
     catalogStatus.textContent='저장 및 고객 화면 반영 완료 · '+new Date(result.savedAt).toLocaleString('ko-KR');
@@ -39,6 +42,26 @@ async function publishSavedProduct(){
 }
 retryProductPublish.onclick=publishSavedProduct;
 saveCatalogButton.onclick=()=>runCatalog('save');loadCatalogButton.onclick=()=>runCatalog('load');
+async function refreshSheetSaleList(){
+ if(catalogBusy)return;loadCatalogButton.disabled=true;
+ try{const login=await (await fetch('/api/google/status')).json();if(!login.authenticated||!login.sheetUrl)throw Error('설정 메뉴에서 구글 시트를 연결해 주세요.');const response=await fetch('/api/catalog/load',{method:'POST',headers:{'X-CSRF-Token':login.csrf}});const result=await response.json();if(!response.ok)throw Error(result.error||'목록 조회 실패');if(result.empty){catalogStatus.textContent='시트에 저장된 주문서가 없습니다. 현재 편집 내용은 유지됩니다.';return;}
+  savedSaleSelect.replaceChildren(new Option('시트의 주문서 선택',''));for(const date of Object.keys(result.data.salePages).sort().reverse())savedSaleSelect.add(new Option(date+' · '+(result.data.salePageNames[date]||'라이브 주문서')+' · '+result.data.salePages[date].length+'개 상품',date));
+  catalogStatus.textContent='시트의 최신 목록입니다. 날짜를 선택하고 주문서 불러오기를 누르세요. 편집 내용은 아직 바뀌지 않았습니다.';
+ }catch(error){catalogStatus.textContent=error.message;}finally{loadCatalogButton.disabled=false;}
+}
+loadCatalogButton.textContent='시트의 주문서 목록 새로고침';loadCatalogButton.onclick=refreshSheetSaleList;
+document.querySelector('#loadSalePage').onclick=()=>{const date=savedSaleSelect.value;if(!date){catalogStatus.textContent='불러올 날짜를 선택해 주세요.';return;}return runCatalog('load',{selectedDate:date});};
+window.refreshSheetSaleList=refreshSheetSaleList;
+window.startOrderSyncRecovery=()=>{
+ let running=false;
+ async function recover(){if(running||document.hidden)return;running=true;const status=document.querySelector('#orderSheetStatus');
+  try{const r=await fetch('/api/google/status');if(!r.ok)return;const login=await r.json();if(!login.authenticated||!login.sheetUrl||login.approvalStatus!=='approved')return;
+   const response=await fetch('/api/orders/sync',{method:'POST',headers:{'X-CSRF-Token':login.csrf}});const result=await response.json();if(!response.ok)throw Error(result.error||'구글 시트 연결 확인 필요');
+   status.textContent=result.pending?'시트 기록 처리 중입니다. 2분 후 다시 확인합니다.':'시트 기록 확인 완료 · '+new Date().toLocaleTimeString('ko-KR');
+  }catch(error){status.textContent='시트 기록 미완료: '+error.message+' 이 화면을 열어 두면 2분마다 재시도합니다. 주문 기록은 서버에 보관됩니다.';}finally{running=false;}
+ }
+ recover();setInterval(recover,120000);
+};
 async function cancelCustomerOrder(order,button){
   if(!confirm(order.buyer.name+'님의 테스트 주문을 취소할까요? 주문번호: '+order.id+'\n해당 수량의 재고가 복구됩니다. 실제 환불은 발생하지 않습니다.'))return;
   const status=document.querySelector('#orderSheetStatus');button.disabled=true;status.textContent='주문 취소 처리 중…';
