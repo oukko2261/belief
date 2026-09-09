@@ -23,6 +23,7 @@ if(!login.authenticated){document.body.replaceChildren();const area=document.cre
    document.querySelector('#adminToggle').click();
    if(login.isApprovalAdmin){const {showApprovals}=await import('./approval-ui.js?v=recovery-79ffabf');showApprovals(login);}
    const {organizeAdmin}=await import('./admin-layout.js?v=recovery-79ffabf');organizeAdmin();
+   const {addCustomerShortcut}=await import('./customer-shortcut.js?v=restore-link-1');addCustomerShortcut(login.sellerId);
   }
  }catch(error){document.body.replaceChildren();const p=document.createElement('p');p.textContent=error.message||'관리자 화면을 열지 못했습니다. 새로고침해 주세요.';document.body.append(p);}finally{document.body.style.display=originalDisplay;}
 }
