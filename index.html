@@ -8,6 +8,7 @@
   </head>
   <body>
     <header>
+      <div id="shopLogo" class="shop-logo" aria-label="쇼핑몰 로고"></div>
       <p class="eyebrow">LIVE SHOPPING</p>
       <h1>오늘의 라이브 주문서</h1>
       <p id="saleDateHeading"></p>
@@ -19,6 +20,7 @@
     <main>
       <section id="adminPanel" hidden>
         <h2>상품 관리</h2>
+        <details id="customerOrdersPanel"><summary>접수된 테스트 주문</summary><button id="refreshCustomerOrders" type="button" class="copy">주문 목록 새로고침</button><button id="syncOrdersToSheet" type="button" class="copy">주문을 구글시트에 기록</button><p id="orderSheetStatus" role="status">Google 로그인 후 누르면 아직 기록되지 않은 주문을 시트에 추가합니다.</p><p id="customerOrdersStatus" role="status"></p><div id="customerOrdersList"></div></details>
         <details id="storeEditor">
           <summary>쇼핑몰 문구·계좌·색상 수정</summary>
           <p>상단 제목부터 주문 안내까지 수정하세요. 저장한 설정은 이 브라우저의 모든 판매 날짜에 적용됩니다.</p>
@@ -30,6 +32,7 @@
           <h4 id="loadOrderHeading">주문서 불러오기</h4>
           <label>저장된 주문서<select id="savedSalePages"><option value="">저장된 주문서 선택</option></select></label>
           <button id="loadSalePage" type="button" class="copy">주문서 불러오기</button>
+          <button id="loadCatalog" type="button" class="copy">Google 시트에서 불러오기</button>
           <button id="exportSalePdf" type="button" class="copy">선택한 주문서 PDF 저장</button>
           <small>저장된 날짜의 상품 목록을 PDF로 저장합니다. 가격·사진·안내 문구는 현재 저장된 설정 기준입니다. PDF 화면에서 인쇄 → PDF로 저장을 선택하세요.</small>
           </section>
@@ -37,24 +40,27 @@
           <h4 id="saveOrderHeading">주문서 저장하기</h4>
           <label>판매 날짜<input id="saleDate" type="date" /></label>
           <label>주문서 이름<input id="salePageName" maxlength="100" placeholder="예: 봄 신상품 라이브" /></label>
-          <button id="saveSaleDate" type="button" class="copy">주문서 저장하기</button>
+          <p>상품 편집을 마친 뒤 아래 버튼을 누르면 날짜·시트 저장과 고객 화면 반영이 함께 진행됩니다.</p>
+          <button id="saveCatalog" type="button" class="submit">주문서 저장 · 고객 화면에 반영</button>
+          <p id="catalogSyncStatus" role="status">처음 한 번 Google 연결이 필요합니다.</p>
+          <a id="customerViewLink" hidden target="_blank" rel="noopener noreferrer">고객 화면 열기</a>
           </section>
-          <label>날짜별 주문서 주소<input id="saleLink" readonly /></label>
-          <small>휴대폰 테스트 주소입니다. 상품·사진은 현재 브라우저에만 저장되며 다른 기기와 공유되지 않습니다.</small>
+          <input id="saleLink" type="hidden" readonly />
           <p id="saleDateStatus" role="status"></p>
         </section>
-        <button id="sheetConnect" type="button" class="copy" aria-expanded="false">Google 스프레드시트 연결하기</button>
+        <button id="sheetConnect" type="button" class="copy" aria-expanded="false">Google 연결 설정</button>
         <section id="sheetSettings" hidden>
           <h3>Google 스프레드시트 연결 설정</h3>
           <div id="googleConnection">
             <p id="googleStatus" role="status">Google 연결 상태 확인 중…</p>
-            <button id="googleLogin" type="button" class="copy">Google로 관리자 로그인</button>
+            <button id="googleLogin" type="button" class="copy">Google로 판매자 가입 / 로그인</button>
+            <label id="sellerShopField" hidden>내 쇼핑몰 이름<input id="sellerShopName" maxlength="60" placeholder="예: Belief" /></label>
             <button id="googleCreateSheet" type="button" class="copy" hidden>새 관리 시트 만들기</button>
             <button id="googleLogout" type="button" class="copy" hidden>로그아웃</button>
             <a id="googleSheetLink" target="_blank" rel="noopener noreferrer" hidden>생성한 Google 시트 열기</a>
-            <p>현재 단계는 로그인과 관리 시트 생성입니다. 상품·주문 자동 동기화는 다음 단계에서 연결합니다.</p>
+            <p>관리자는 이 컴퓨터에서 Google 로그인 후 저장합니다. 공개 페이지에는 상품 정보만 표시하며 Google 계정·계좌·주문자 정보는 전송하지 않습니다.</p>
           </div>
-          <details><summary>기존 주소 입력 설정 (미연동)</summary>
+          <details hidden><summary>기존 주소 입력 설정 (미연동)</summary>
           <p>시트 주소만으로는 자동 연결되지 않습니다. Apps Script 연결 코드를 배포한 주소가 필요합니다. 현재는 주소 저장까지 지원하며 상품·주문 동기화는 아직 연결되지 않았습니다.</p>
           <form id="sheetForm">
             <label>Google 스프레드시트 주소<input id="sheetUrl" type="url" required placeholder="https://docs.google.com/spreadsheets/d/…/edit" /></label>
@@ -65,7 +71,7 @@
           <a href="https://sheets.google.com/create" target="_blank" rel="noopener noreferrer">새 Google 스프레드시트 만들기</a>
           </details>
         </section>
-        <p>사진첩에서 사진을 선택해 상품을 등록하세요. 변경 내용은 이 브라우저에만 저장됩니다. 로그인 없는 테스트 관리자 화면입니다.</p>
+        <p>상품을 편집해 목록에 저장한 다음, 위의 ‘주문서 저장 · 고객 화면에 반영’을 눌러 공개하세요.</p>
         <label>상품 선택 · 새 상품 등록<select id="productSelect"><option value="">새 상품 등록</option></select></label>
         <form id="productForm">
           <label>상품명 · 수정 가능<input id="productName" required maxlength="100" placeholder="원하는 상품 이름을 입력하세요" /></label>
@@ -129,13 +135,14 @@
 
     <dialog id="detailDialog"><button class="close" aria-label="닫기">×</button><div id="detail"></div></dialog>
     <dialog id="success"><div class="success-icon">✓</div><h2>주문이 접수되었습니다</h2><p id="successText"></p><button class="submit close-success">확인</button></dialog>
-    <script src="app.js"></script>
-    <script src="google-connect.js"></script>
-    <script src="store-settings.js"></script>
-    <script src="sale-pages.js"></script>
-    <script src="sale-pdf.js"></script>
-    <script src="inline-copy.js"></script>
-    <script src="live-order.js"></script>
-    <script src="product-options.js"></script>
-  </body>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  <script type="module" src="./github-bootstrap.js"></script></body>
 </html>

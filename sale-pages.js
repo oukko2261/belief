@@ -1,6 +1,6 @@
 // Preserve the existing date-to-product mapping; names are optional metadata.
 let salePageNames={};
-try{const saved=JSON.parse(localStorage.getItem('live-shop-sale-names-v1'));if(saved&&typeof saved==='object'&&!Array.isArray(saved))salePageNames=saved;}catch{}
+try{const saved=JSON.parse(sellerStorage.getItem('live-shop-sale-names-v1'));if(saved&&typeof saved==='object'&&!Array.isArray(saved))salePageNames=saved;}catch{}
 const savedSaleSelect=document.querySelector('#savedSalePages');
 const saleName=document.querySelector('#salePageName');
 function refreshSavedSalePages(){
@@ -31,15 +31,15 @@ document.querySelector('#saleDate').onchange=()=>{
   try{history.replaceState(null,'',document.querySelector('#saleLink').value);}catch{}
   document.querySelector('#saleDateStatus').textContent=`${date} 주문서입니다. 상품을 저장하면 이 날짜에 추가됩니다.`;
 };
-document.querySelector('#saveSaleDate').onclick=()=>{
+function persistCurrentSale(){
   const status=document.querySelector('#saleDateStatus');
   const ids=salePages[activeSaleDate]||products.filter(isOnSaleDate).map(p=>p.id);
   const next={...salePages,[activeSaleDate]:ids},names={...salePageNames,[activeSaleDate]:saleName.value.trim()};
-  const oldPages=localStorage.getItem('live-shop-sale-pages-v1');
+  const oldPages=sellerStorage.getItem('live-shop-sale-pages-v1');
   try{
-    localStorage.setItem('live-shop-sale-pages-v1',JSON.stringify(next));
-    try{localStorage.setItem('live-shop-sale-names-v1',JSON.stringify(names));}catch(error){if(oldPages===null)localStorage.removeItem('live-shop-sale-pages-v1');else localStorage.setItem('live-shop-sale-pages-v1',oldPages);throw error;}
-    salePages=next;salePageNames=names;cart=cart.filter(isOnSaleDate);drawCart();drawProducts();refreshSavedSalePages();status.textContent=`${activeSaleDate} · ${names[activeSaleDate]||'라이브 주문서'} 저장 완료. 목록에서 다시 불러올 수 있습니다.`;
-  }catch{status.textContent='저장하지 못했습니다. 브라우저 저장 공간과 설정을 확인해 주세요.';}
+    sellerStorage.setItem('live-shop-sale-pages-v1',JSON.stringify(next));
+    try{sellerStorage.setItem('live-shop-sale-names-v1',JSON.stringify(names));}catch(error){if(oldPages===null)sellerStorage.removeItem('live-shop-sale-pages-v1');else sellerStorage.setItem('live-shop-sale-pages-v1',oldPages);throw error;}
+    salePages=next;salePageNames=names;cart=cart.filter(isOnSaleDate);drawCart();drawProducts();refreshSavedSalePages();status.textContent='';return true;
+  }catch{status.textContent='저장하지 못했습니다. 브라우저 저장 공간과 설정을 확인해 주세요.';return false;}
 };
 refreshSavedSalePages();

@@ -15,20 +15,21 @@ async function loadGoogleStatus(){
     googleLogin.disabled=!googleSession.configured;
     googleLogin.hidden=googleSession.authenticated;
     googleCreate.hidden=!googleSession.authenticated||Boolean(googleSession.sheetUrl);
+    document.querySelector('#sellerShopField').hidden=googleCreate.hidden;
     googleLogout.hidden=!googleSession.authenticated;
     googleLink.hidden=!googleSession.sheetUrl;
     if(googleSession.sheetUrl)googleLink.href=googleSession.sheetUrl;
-    googleStatus.textContent=!googleSession.configured?'최초 Google 앱 설정이 필요합니다. 클라이언트 ID·보안 비밀번호·관리자 이메일 설정 후 로그인할 수 있습니다.':googleSession.authenticated?`${googleSession.email} 로그인됨 · ${googleSession.sheetUrl?'시트 생성됨 · 상품/주문 동기화 미연결':'관리 시트를 만들어 주세요.'}`:'Google 계정으로 로그인해 주세요.';
+    googleStatus.textContent=!googleSession.configured?'최초 Google 앱 설정이 필요합니다. 운영자가 클라이언트 ID·보안 비밀번호를 설정하면 판매자가 각자 로그인할 수 있습니다.':googleSession.authenticated?`${googleSession.email} 로그인됨 · ${googleSession.sheetUrl?googleSession.shopName+' · 시트 연결됨 · 주문 자동 기록 사용':'내 쇼핑몰 이름을 입력하고 관리 시트를 만들어 주세요.'}`:'Google 계정으로 로그인해 주세요.';
   }catch{googleLogin.disabled=true;googleStatus.textContent='이 테스트 페이지는 상품·사진·날짜별 주문서 체험용입니다. Google 로그인과 시트 자동 동기화는 아직 연결 전입니다.';}
 }
-googleLogin.onclick=()=>location.assign('/auth/google');
+googleLogin.onclick=()=>location.assign('https://live-order-mobile-test.wooks88.chatgpt.site/auth/google');
 async function googleAction(path){
-  const response=await fetch(path,{method:'POST',headers:{'X-CSRF-Token':googleSession?.csrf||''}});
+  const response=await fetch(path,{method:'POST',headers:{'X-CSRF-Token':googleSession?.csrf||'','Content-Type':'application/json'},body:JSON.stringify({shopName:document.querySelector('#sellerShopName').value.trim()})});
   const result=await response.json();if(!response.ok)throw Error(result.error||'연결에 실패했습니다.');
   await loadGoogleStatus();return result;
 }
 googleCreate.onclick=async()=>{googleCreate.disabled=true;googleStatus.textContent='관리 시트를 만들고 있습니다…';try{await googleAction('/api/google/create-sheet');}catch(error){googleStatus.textContent=error.message+' 생성 결과가 불확실하면 Google Drive에서 먼저 확인해 주세요.';}finally{googleCreate.disabled=false;}};
-googleLogout.onclick=async()=>{try{await googleAction('/api/google/logout');}catch(error){googleStatus.textContent=error.message;}};
+googleLogout.onclick=async()=>{try{await googleAction('/api/google/logout');sessionStorage.removeItem('belief-session');location.reload();}catch(error){googleStatus.textContent=error.message;}};
 loadGoogleStatus().then(()=>{
   const result=new URL(location.href).searchParams.get('google');
   if(result){document.querySelector('#adminPanel').hidden=false;document.querySelector('#adminToggle').setAttribute('aria-expanded','true');document.querySelector('#sheetSettings').hidden=false;document.querySelector('#sheetConnect').setAttribute('aria-expanded','true');

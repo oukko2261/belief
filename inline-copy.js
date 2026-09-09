@@ -15,7 +15,7 @@ document.querySelector('#saveInlineCopy').onclick=()=>{
   const status=document.querySelector('#inlineCopyStatus');
   if(!next.title){status.textContent='주문서 제목을 입력해 주세요.';return;}
   if(inlineCopyFields.some(([key])=>next[key].length>500)){status.textContent='각 문구는 500자 이하로 입력해 주세요.';return;}
-  try{localStorage.setItem('live-shop-store-settings-v1',JSON.stringify(next));storeSettings=next;applyStoreSettings();for(const [key]of inlineCopyFields)document.querySelector('#storeForm').elements.namedItem(key).value=next[key];status.textContent='저장했습니다. 현재 브라우저에 적용됩니다.';}catch{status.textContent='저장하지 못했습니다. 브라우저 저장 설정을 확인해 주세요.';}
+  try{sellerStorage.setItem('live-shop-store-settings-v1',JSON.stringify(next));storeSettings=next;applyStoreSettings();for(const [key]of inlineCopyFields)document.querySelector('#storeForm').elements.namedItem(key).value=next[key];status.textContent='저장했습니다. 현재 브라우저에 적용됩니다.';}catch{status.textContent='저장하지 못했습니다. 브라우저 저장 설정을 확인해 주세요.';}
 };
 new MutationObserver(updateInlineMode).observe(document.querySelector('#adminToggle'),{attributes:true,attributeFilter:['aria-expanded']});
 updateInlineMode();
