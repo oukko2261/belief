@@ -1,10 +1,11 @@
-import {mountSellerProducts} from './seller-products.js';
+import {mountSellerProducts} from './seller-products.js?v=a8dd9ffe424fe4c5';
 export function organizeAdmin(){
  const panel=document.querySelector('#adminPanel');
  const nav=document.createElement('nav');nav.setAttribute('aria-label','판매자 관리 메뉴');nav.className='seller-menu';
  const areas=[];
  function area(name,nodes){const section=document.createElement('section');section.className='seller-area';section.setAttribute('aria-label',name);for(const node of nodes)if(node)section.append(node);areas.push(section);const button=document.createElement('button');button.type='button';button.textContent=name;button.onclick=()=>{areas.forEach(a=>a.hidden=a!==section);for(const b of nav.children)b.setAttribute('aria-current',b===button?'page':'false');};nav.append(button);return section;}
  const q=s=>document.querySelector(s);
+ const productSelect=q('#productSelect'),productForm=q('#productForm');
  const dates=area('주문서',[q('#dateManager')]);
  const productList=document.createElement('section');
  const product=area('상품',[productList,q('#productSelect').closest('label'),q('#productForm')]);
@@ -12,7 +13,7 @@ export function organizeAdmin(){
  const settings=area('설정',[q('#storeEditor'),q('#sheetConnect'),q('#sheetSettings')]);
  const approval=q('#sellerApprovalPanel');if(approval)area('판매자 승인',[approval]);
  panel.replaceChildren(nav,...areas);nav.firstChild.click();
- mountSellerProducts(productList,window.getSellerCatalogState);
+ mountSellerProducts(productList,window.getSellerCatalogState,{select:productSelect,form:productForm});
  q('#productSelect').closest('label').hidden=true;
  window.refreshSheetSaleList?.();
  q('#customerOrdersPanel').open=true;q('#storeEditor').open=true;

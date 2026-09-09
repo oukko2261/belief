@@ -19,10 +19,10 @@ if(!login.authenticated){document.body.replaceChildren();const area=document.cre
    const prefix='belief-seller-'+login.sellerId+':';window.sellerStorage={getItem:key=>localStorage.getItem(prefix+key),setItem:(key,value)=>localStorage.setItem(prefix+key,value),removeItem:key=>localStorage.removeItem(prefix+key)};
    const keys={products:'live-shop-products-v1',salePages:'live-shop-sale-pages-v1',salePageNames:'live-shop-sale-names-v1',storeSettings:'live-shop-store-settings-v1'};
    if(sellerStorage.getItem(keys.products)===null){let data={products:[],salePages:{},salePageNames:{},storeSettings:{}};if(login.sheetUrl){const r=await fetch('/api/catalog/load',{method:'POST',headers:{'X-CSRF-Token':login.csrf}});const saved=await r.json();if(!r.ok)throw Error(saved.error||'시트에서 불러오지 못했습니다.');if(!saved.empty)data=saved.data;}for(const [key,path]of Object.entries(keys))sellerStorage.setItem(path,JSON.stringify(data[key]));}
-   for(const src of ['app.js','google-connect.js','store-settings.js','sale-pages.js','sale-pdf.js','inline-copy.js','live-order.js','product-options.js','catalog-sync.js'])await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='./'+src;script.onload=resolve;script.onerror=reject;document.body.append(script);});
+   for(const src of ['app.js','google-connect.js','store-settings.js','sale-pages.js','sale-pdf.js','inline-copy.js','live-order.js','product-options.js','catalog-sync.js'])await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='./'+src+'?v=a8dd9ffe424fe4c5';script.onload=resolve;script.onerror=reject;document.body.append(script);});
    document.querySelector('#adminToggle').click();
-   if(login.isApprovalAdmin){const {showApprovals}=await import('./approval-ui.js');showApprovals(login);}
-   const {organizeAdmin}=await import('./admin-layout.js');organizeAdmin();
+   if(login.isApprovalAdmin){const {showApprovals}=await import('./approval-ui.js?v=a8dd9ffe424fe4c5');showApprovals(login);}
+   const {organizeAdmin}=await import('./admin-layout.js?v=a8dd9ffe424fe4c5');organizeAdmin();
   }
  }catch(error){document.body.replaceChildren();const p=document.createElement('p');p.textContent=error.message||'관리자 화면을 열지 못했습니다. 새로고침해 주세요.';document.body.append(p);}finally{document.body.style.display=originalDisplay;}
 }

@@ -1,5 +1,6 @@
-export function mountSellerProducts(host,getState){
- const select=document.querySelector('#productSelect'),form=document.querySelector('#productForm');
+export function mountSellerProducts(host,getState,controls={}){
+ const select=controls.select||document.querySelector('#productSelect'),form=controls.form||document.querySelector('#productForm');
+ if(!select||!form)throw Error('상품 편집 화면을 준비하지 못했습니다. 페이지를 다시 열어 주세요.');
  const heading=document.createElement('h3'),context=document.createElement('p'),note=document.createElement('p'),list=document.createElement('div'),add=document.createElement('button');
  heading.textContent='등록된 상품';note.textContent='현재 편집 중인 상품 목록입니다. 고객 화면 반영 여부는 저장 결과를 확인하세요.';
  list.className='seller-product-list';add.type='button';add.textContent='새 상품 등록';host.append(context,heading,note,list,add);
