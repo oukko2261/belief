@@ -1,4 +1,4 @@
-import {mountSellerProducts} from './seller-products.js?v=a8dd9ffe424fe4c5';
+import {mountSellerProducts} from './seller-products.js?v=9dfd7674ebca2225';
 export function organizeAdmin(){
  const panel=document.querySelector('#adminPanel');
  const nav=document.createElement('nav');nav.setAttribute('aria-label','판매자 관리 메뉴');nav.className='seller-menu';
