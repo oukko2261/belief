@@ -22,6 +22,7 @@ if(!login.authenticated){document.body.replaceChildren();const area=document.cre
    for(const src of ['app.js','google-connect.js','store-settings.js','sale-pages.js','sale-pdf.js','inline-copy.js','live-order.js','product-options.js','catalog-sync.js'])await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='./'+src;script.onload=resolve;script.onerror=reject;document.body.append(script);});
    document.querySelector('#adminToggle').click();
    if(login.isApprovalAdmin){const {showApprovals}=await import('./approval-ui.js');showApprovals(login);}
+   const {organizeAdmin}=await import('./admin-layout.js');organizeAdmin();
   }
  }catch(error){document.body.replaceChildren();const p=document.createElement('p');p.textContent=error.message||'관리자 화면을 열지 못했습니다. 새로고침해 주세요.';document.body.append(p);}finally{document.body.style.display=originalDisplay;}
 }

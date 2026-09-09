@@ -1,5 +1,6 @@
 export function showApprovals(login){
  const panel=document.createElement('details');panel.style.cssText='margin:20px auto;padding:20px;max-width:900px;background:white;border:1px solid #ddd;border-radius:12px';
+ panel.id='sellerApprovalPanel';
  const heading=document.createElement('summary');heading.textContent='판매자 승인 관리';const refresh=document.createElement('button');refresh.textContent='승인 목록 새로고침';const status=document.createElement('p'),list=document.createElement('div');panel.append(heading,refresh,status,list);document.body.prepend(panel);
  const labels={pending:'승인 대기',approved:'승인됨',rejected:'거절됨',suspended:'이용 중지'};
  async function action(path,data){const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':login.csrf},body:JSON.stringify(data||{})});const value=await response.json();if(!response.ok)throw Error(value.error||'요청에 실패했습니다.');return value;}

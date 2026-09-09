@@ -23,7 +23,7 @@
         <details id="customerOrdersPanel"><summary>접수된 테스트 주문</summary><button id="refreshCustomerOrders" type="button" class="copy">주문 목록 새로고침</button><button id="syncOrdersToSheet" type="button" class="copy">주문을 구글시트에 기록</button><p id="orderSheetStatus" role="status">Google 로그인 후 누르면 아직 기록되지 않은 주문을 시트에 추가합니다.</p><p id="customerOrdersStatus" role="status"></p><div id="customerOrdersList"></div></details>
         <details id="storeEditor">
           <summary>쇼핑몰 문구·계좌·색상 수정</summary>
-          <p>상단 제목부터 주문 안내까지 수정하세요. 저장한 설정은 이 브라우저의 모든 판매 날짜에 적용됩니다.</p>
+          <p>로고·문구·배송비를 설정합니다. 저장하면 고객 화면에도 반영됩니다.</p>
           <form id="storeForm"><div id="storeFields"></div><button type="submit" class="submit">쇼핑몰 설정 저장</button><p id="storeStatus" role="status"></p></form>
         </details>
         <section id="dateManager">
@@ -40,7 +40,7 @@
           <h4 id="saveOrderHeading">주문서 저장하기</h4>
           <label>판매 날짜<input id="saleDate" type="date" /></label>
           <label>주문서 이름<input id="salePageName" maxlength="100" placeholder="예: 봄 신상품 라이브" /></label>
-          <p>상품 편집을 마친 뒤 아래 버튼을 누르면 날짜·시트 저장과 고객 화면 반영이 함께 진행됩니다.</p>
+          <p>날짜·이름을 변경한 경우 저장하세요. 상품은 상품 저장 시 자동 반영됩니다.</p>
           <button id="saveCatalog" type="button" class="submit">주문서 저장 · 고객 화면에 반영</button>
           <p id="catalogSyncStatus" role="status">처음 한 번 Google 연결이 필요합니다.</p>
           <a id="customerViewLink" hidden target="_blank" rel="noopener noreferrer">고객 화면 열기</a>
@@ -58,7 +58,7 @@
             <button id="googleCreateSheet" type="button" class="copy" hidden>새 관리 시트 만들기</button>
             <button id="googleLogout" type="button" class="copy" hidden>로그아웃</button>
             <a id="googleSheetLink" target="_blank" rel="noopener noreferrer" hidden>생성한 Google 시트 열기</a>
-            <p>관리자는 이 컴퓨터에서 Google 로그인 후 저장합니다. 공개 페이지에는 상품 정보만 표시하며 Google 계정·계좌·주문자 정보는 전송하지 않습니다.</p>
+            <p>로그인한 판매자 본인의 구글 시트에 상품과 주문을 저장합니다.</p>
           </div>
           <details hidden><summary>기존 주소 입력 설정 (미연동)</summary>
           <p>시트 주소만으로는 자동 연결되지 않습니다. Apps Script 연결 코드를 배포한 주소가 필요합니다. 현재는 주소 저장까지 지원하며 상품·주문 동기화는 아직 연결되지 않았습니다.</p>
@@ -71,7 +71,7 @@
           <a href="https://sheets.google.com/create" target="_blank" rel="noopener noreferrer">새 Google 스프레드시트 만들기</a>
           </details>
         </section>
-        <p>상품을 편집해 목록에 저장한 다음, 위의 ‘주문서 저장 · 고객 화면에 반영’을 눌러 공개하세요.</p>
+        <p>상품 저장 시 시트 저장과 고객 화면 반영이 함께 진행됩니다.</p>
         <label>상품 선택 · 새 상품 등록<select id="productSelect"><option value="">새 상품 등록</option></select></label>
         <form id="productForm">
           <label>상품명 · 수정 가능<input id="productName" required maxlength="100" placeholder="원하는 상품 이름을 입력하세요" /></label>
