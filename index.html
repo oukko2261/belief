@@ -77,10 +77,16 @@
             <label>재고 수량<input id="productStock" type="number" min="0" max="1000000" step="1" required /></label>
           </div>
           <label>상품 설명<textarea id="productDescription" maxlength="5000"></textarea></label>
-          <label>사이즈 옵션<input id="sizeOptions" placeholder="예: S, M, L (쉼표로 구분)" maxlength="300" /></label>
-          <label>색상 옵션<input id="colorOptions" placeholder="예: 블랙, 화이트, 베이지" maxlength="300" /></label>
-          <label class="radio"><input id="allowCustomOption" type="checkbox" /> 고객 직접입력 옵션 사용</label>
-          <label>직접입력 항목 이름<input id="customOptionLabel" placeholder="예: 각인 문구, 요청 옵션" maxlength="50" /></label>
+          <fieldset><legend>상품 옵션 설정</legend>
+          <label class="radio"><input id="enableSize" type="checkbox" /> 사이즈</label>
+          <label id="sizeOptionFields" hidden>사이즈 상세 목록<input id="sizeOptions" placeholder="예: S, M, L (쉼표로 구분)" maxlength="300" /></label>
+          <label class="radio"><input id="enableColor" type="checkbox" /> 색상</label>
+          <label id="colorOptionFields" hidden>색상 상세 목록<input id="colorOptions" placeholder="예: 블랙, 화이트, 베이지" maxlength="300" /></label>
+          <label class="radio"><input id="allowCustomOption" type="checkbox" /> 직접입력</label>
+          <div id="customOptionFields" hidden>
+          <label>옵션 이름<input id="customOptionLabel" placeholder="예: 소재, 구성, 길이" maxlength="50" /></label>
+          <label>상세 목록<input id="customOptionValues" placeholder="예: 면, 린넨, 실크 (쉼표로 구분)" maxlength="300" /></label>
+          </div></fieldset>
           <small>옵션별 추가금 없이 상품 가격·재고를 함께 사용합니다.</small>
           <label class="radio"><input id="hideProductStock" type="checkbox" /> 재고 수량 표시 안 함 (품절·주문 수량 제한은 유지)</label>
           <label class="radio"><input id="productVisible" type="checkbox" checked /> 주문서에 표시</label>
