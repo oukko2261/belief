@@ -23,7 +23,7 @@
     <main>
       <section id="adminPanel" hidden>
         <h2>상품 관리</h2>
-        <details id="customerOrdersPanel"><summary>접수된 테스트 주문</summary><button id="refreshCustomerOrders" type="button" class="copy">주문 목록 새로고침</button><button id="syncOrdersToSheet" type="button" class="copy">주문을 구글시트에 기록</button><p id="orderSheetStatus" role="status">Google 로그인 후 누르면 아직 기록되지 않은 주문을 시트에 추가합니다.</p><p id="customerOrdersStatus" role="status"></p><div id="customerOrdersList"></div></details>
+        <details id="customerOrdersPanel"><summary>접수 주문 · 입금 확인</summary><button id="refreshCustomerOrders" type="button" class="copy">주문 목록 새로고침</button><button id="syncOrdersToSheet" type="button" class="copy">주문을 구글시트에 기록</button><p id="orderSheetStatus" role="status">입금 대기 주문은 재고와 발주 대상에 포함되지 않습니다.</p><p id="customerOrdersStatus" role="status"></p><div id="customerOrdersList"></div></details>
         <details id="storeEditor">
           <summary>쇼핑몰 문구·계좌·색상 수정</summary>
           <p>로고·문구·배송비를 설정합니다. 저장하면 고객 화면에도 반영됩니다.</p>
